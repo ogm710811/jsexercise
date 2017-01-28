@@ -4,7 +4,6 @@ its movements so that we can send it commands from Earth.
 */
 
 // create a grid of 10 x 10
-//grid = [ [10] [10] ];
 grid = [
   ['.','.','.','.','.','.','.','.','.','.'],
 	['.','.','.','.','.','.','.','.','.','.'],
@@ -34,7 +33,7 @@ for (var i = 0; i < grid.length; i++) {
 }
 
 // commands to send to myRover
-commands = ["b", "b", "f", "f", "r"];
+commands = ["f", "f", "r"];
 
 // myRover object
 var myRover = {
@@ -142,16 +141,27 @@ function checkGrid(rover) {
 	}
 }
 
-/* Checks the grid to verify if the rover is on the edge*/
+/* Checks for obstacles on the grid */
 function checkObstacle (rover) {
-	for (var i = 0; i < obstacles.length; i++) {
-		if ( rover.position == obstacles[i] ) {
-			return true;
-		}
-		else {
-			return false;
-		}
-	}
+  for (var i = 0; i < obstacles.length; i++) {
+    if (rover.position[0] == obstacles[i][0] && rover.position[1] == obstacles[i][1]){
+      return true;
+    }
+    return false;
+  }
+}
+
+/* Changes the rover direction always to the right when finding an obstacle. */
+function changeDirection(rover) {
+  if (myRover.direction == 'N') {
+    myRover.direction = 'E';
+  } else if (myRover.direction == 'E') {
+    myRover.direction = 'S';
+  } else if (myRover.direction == 'W') {
+    myRover.direction = 'N';
+  } else {
+    myRover.direction = 'W';
+  }
 }
 
 /* Displays position of the rover after apply a command. */
@@ -195,8 +205,9 @@ for(var i = 0; i < commands.length; i++) {
 	obstaclesFound = checkObstacle(myRover);
 	if (obstaclesFound) {
 		console.log("myRover found an obstacle. We are sending it a back command");
-		console.log("Rover Position before found an obstacle: [" + myRover.position[0] + ", " + myRover.position[1] + "]");
-		continue;
+		console.log("Position of obstacle: [" + myRover.position[0] + ", " + myRover.position[1] + "]");
+    changeDirection(myRover);
+    continue;
 	}
 
 	displayPosition();
